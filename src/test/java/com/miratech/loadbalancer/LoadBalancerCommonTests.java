@@ -34,13 +34,23 @@ class LoadBalancerCommonTests extends LoadBalancerCommon {
 	}
 
 	@Test
+	public void shouldThrowExceptionOnDuplicatedInstances() {
+		LoadBalancer.AddressInstance addressInstance = new LoadBalancer.AddressInstance(ADDRESS_PREFIX + "1");
+		loadBalancer.add(addressInstance);
+
+		assertThrows(RuntimeException.class, () -> {
+			loadBalancer.add(addressInstance);
+		});
+	}
+
+	@Test
 	public void shouldThrowExceptionInstancesExceeded() {
 		for (int i = 0; i < MAX_ADDRESSES; i++) {
 			LoadBalancer.AddressInstance addressInstance = new LoadBalancer.AddressInstance(ADDRESS_PREFIX + (i + 1));
 			loadBalancer.add(addressInstance);
 		}
 
-		LoadBalancer.AddressInstance addressInstance = new LoadBalancer.AddressInstance(ADDRESS_PREFIX + "11");
+		LoadBalancer.AddressInstance addressInstance = new LoadBalancer.AddressInstance(ADDRESS_PREFIX + (MAX_ADDRESSES + 1));
 
 		assertThrows(RuntimeException.class, () -> {
 			loadBalancer.add(addressInstance);
